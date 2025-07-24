@@ -104,4 +104,59 @@ public final class ReflectionUtils {
 
     return result;
   }
+
+  /**
+   * Get the ID value of an entity.
+   *
+   * @param entity the entity object
+   * @return the ID value, or null if not found
+   */
+  public static Object getEntityId(Object entity) {
+    try {
+      for (java.lang.reflect.Field field : entity.getClass().getDeclaredFields()) {
+        if (field.isAnnotationPresent(jakarta.persistence.Id.class)) {
+          field.setAccessible(true);
+          return field.get(entity);
+        }
+      }
+    } catch (Exception e) {
+      logger.error("Error getting entity ID", e);
+    }
+    return null;
+  }
+
+  /**
+   * Set a field value on an object.
+   *
+   * @param object the object
+   * @param fieldName the field name
+   * @param value the value to set
+   */
+  public static void setFieldValue(Object object, String fieldName, Object value) {
+    try {
+      java.lang.reflect.Field field = object.getClass().getDeclaredField(fieldName);
+      field.setAccessible(true);
+      field.set(object, value);
+    } catch (Exception e) {
+      logger.error("Error setting field value", e);
+    }
+  }
+
+  /**
+   * Get a field value from an object.
+   *
+   * @param object the object
+   * @param fieldName the field name
+   * @return the field value
+   */
+  public static Object getFieldValue(Object object, String fieldName) {
+    try {
+      java.lang.reflect.Field field = object.getClass().getDeclaredField(fieldName);
+      field.setAccessible(true);
+      return field.get(object);
+    } catch (Exception e) {
+      logger.error("Error getting field value", e);
+      return null;
+    }
+  }
 }
